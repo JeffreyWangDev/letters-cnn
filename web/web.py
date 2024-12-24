@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, render_template, request
 import cv2
 import numpy as np
-import ai
+import web.ai as ai
 app = Flask(__name__)
 
 @app.route("/")

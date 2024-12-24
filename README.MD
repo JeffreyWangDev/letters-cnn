@@ -51,3 +51,18 @@ python web.py
 ```
 
 Then visit http://localhost:5001 to test the CNN by uploading images.
+
+### Docker Installation
+
+1. **Build the Docker Image**:
+    ```bash
+    docker build -t greek-letter-cnn .
+    ```
+
+2. **Run the Docker Container**:
+    ```bash
+    docker run -it --rm -p 5001:5001 greek-letter-cnn
+    ```
+
+3. **Access the Web Application**:
+    - Visit `http://localhost:5001` in your web browser to test the CNN by uploading images.
