@@ -34,6 +34,11 @@ jobs:
       id-token: write
 
     steps:
+      - name: Removes stuff
+        run: sudo rm -rf "/usr/local/share/boost"
+      - name: Removes more stuff
+        run: sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+        
       - name: Checkout repository
         uses: actions/checkout@v4
 
