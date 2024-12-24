@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Drawing Box</title>
+<style>
+  body {
+    font-family: sans-serif;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+    margin: 0; 
+    
+  }
+  #container {
+
+    border: 1px solid #ccc;
+    overflow: hidden; 
+    background-color: #f0f0f0;
+    text-align: center; 
+    
+  }
+#drawingArea {
+  width: 500px;
+  height: 500px;
+  border: 2px solid black;
+  background-color: white;
+  position: relative;
+}
+
+#drawingArea canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+
+</style>
+</head>
+<body>
+
+  <div id="container">
+    <h3>Draw and see if the ai can detect it!</h3>
+    <a>You need to draw big and fill up most of the area.</a><br>
+    <a>Capital letters work the best!</a><br>
+    <a>This is a custom CNN and code can be found on github.</a>
+<div id="drawingArea">
+  <canvas id="canvus"></canvas>
+</div>
+
+<button id="clear" onclick="ctx.clearRect(0, 0, canvas.width, canvas.height);">Clear Drawing</button>
+<div>
+  <h1 id="letter">Detected Letter: None</h1>
+</div>
+</div>
+<script>
+const canvas = document.getElementById("canvus");
+const area = document.getElementById("drawingArea")
+const ctx = canvas.getContext("2d");
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
+canvas.width = area.clientWidth;
+canvas.height = area.clientWidth;
+
+canvas.addEventListener("mousedown", (e) => {
+  isDrawing = true;
+  lastX = e.offsetX;
+  lastY = e.offsetY;
+});
+
+canvas.addEventListener("mousemove", (e) => {
+  if (isDrawing) {
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 20;
+    ctx.lineCap = "round";
+    ctx.stroke();
+    lastX = e.offsetX;
+    lastY = e.offsetY;
+  }
+});
+
+canvas.addEventListener("mouseup", () => {
+  isDrawing = false;
+  get_result()
+});
+
+canvas.addEventListener("mouseout", () => {
+  isDrawing = false;
+});
+
+
+function dataURItoBlob(dataURI) {
+  const byteString = atob(dataURI.split(',')[1]);
+  const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  return new Blob([ab], { type: mimeString });
+}
+
+
+
+function get_result(){
+  const imageData = canvas.toDataURL('image/png');
+  const formData = new FormData();
+
+  const imageBlob = dataURItoBlob(imageData); 
+
+  formData.append('image', imageBlob, "drawing.png"); 
+  
+  fetch("/api/get_result", {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+      console.log("Success:", data);
+      let letter = data.data
+      console.log(letter)
+      part = document.getElementById("letter")
+      part.textContent = "Detected Letter: "+letter
+  })
+  .catch(error => {
+      console.error("Error:", error);
+  });
+}
+
+
+
+</script>
+
+
+</body>
+</html>
