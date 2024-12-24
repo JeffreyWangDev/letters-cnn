@@ -1,4 +1,5 @@
 # Greek Letter CNN
+# INFO: I CANT HOST THIS BC IT NEEEDS A GPU FOR IT TO RUN AND #NEST IS WAY TO SLOW
 
 This repository contains a Convolutional Neural Network (CNN) for recognizing Greek letters. The model is built using TensorFlow and Keras.
 
